@@ -18,10 +18,14 @@ jQuery(function($) {
       id: 'get_config_button',
       text: 'フォーム設定の取得',
     }).click(function() {
-      window.alert('フォーム設定を取得します');
       kintone.api(kintone.api.url('/k/v1/app/form/fields', true), 'GET', body, function(resp) {
-        console.log('フォーム設定の取得');
-        console.log(resp.properties);
+        var properties = resp.properties;
+        var str = 'フィールドコード,フィールド名,フィールドの種類\n';
+        for (var key in properties) {
+          var prop = properties[key];
+          str += key + ',' + prop.label + ',' + prop.type + '\n';
+        }
+        console.log(str);
       }, function(error) {
         console.log(error);
       });
