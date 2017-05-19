@@ -2,7 +2,7 @@ jQuery(function($) {
   'use strict';
 
   function getFieldProps(body) {
-    kintone.api(kintone.api.url('/k/v1/app/form/fields', true), 'GET', body, function(resp) {
+    return kintone.api(kintone.api.url('/k/v1/app/form/fields', true), 'GET', body).then(function(resp) {
       var properties = resp.properties;
       var str = 'フィールドコード,フィールド名,フィールドの種類\n';
       for (var key in properties) {
@@ -32,8 +32,9 @@ jQuery(function($) {
         app: appId,
         lang: 'ja',
       }
-      var str = getFieldProps(body);
-      console.log(str);
+      getFieldProps(body).then(function(resp) {
+        console.log(resp);
+      });
     }); // click();
 
     // メニューの空白部分にボタンを設定
