@@ -19,6 +19,12 @@ jQuery(function($) {
       text: 'フォーム設定の取得',
     }).click(function() {
       window.alert('フォーム設定を取得します');
+      kintone.api(kintone.api.url('/k/v1/app/form/fields', true), 'GET', body, function(resp) {
+        console.log('フォーム設定の取得');
+        console.log(resp.properties);
+      }, function(error) {
+        console.log(error);
+      });
     }); // click();
 
     // メニューの空白部分にボタンを設定
