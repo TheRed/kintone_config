@@ -1,15 +1,17 @@
 jQuery(function($) {
   'use strict';
 
-  function getFieldProps(body) {
-    return kintone.api(kintone.api.url('/k/v1/app/form/fields', true), 'GET', body).then(function(resp) {
-      var properties = resp.properties;
-      var str = 'フィールドコード,フィールド名,フィールドの種類\n';
-      for (var key in properties) {
-        var prop = properties[key];
-        str += key + ',' + prop.label + ',' + prop.type + '\n';
-      }
-      return str;
+  function getFieldProps(reqBody) {
+    return kintone.api(kintone.api.url('/k/v1/app/form/fields', true), 'GET', reqBody).then(function(resp) {
+      return resp.properties;
+    }, function(error) {
+      return error;
+    });
+  }
+
+  function getLayout(reqBody) {
+    return kintone.api(kintone.api.url('/k/v1/app/form/layout', true), 'GET', reqBody).then(function(resp) {
+      return resp.layout
     }, function(error) {
       return error;
     });
@@ -28,12 +30,32 @@ jQuery(function($) {
       text: 'フォーム設定の取得',
     }).click(function() {
       var appId = event.appId;
-      var body = {
+      var reqBody = {
         app: appId,
         lang: 'ja',
       }
-      getFieldProps(body).then(function(resp) {
-        console.log(resp);
+      var promises = [
+        getFieldProps(reqBody),
+        getLayout(reqBody),
+      ];
+      kintone.Promise.all(promises).then(function(values) {
+        var properties = values[0];
+        var layout = values[1];
+
+        var str = '行番号,列番号,フィールドコード,フィールド名,フィールドの種類\n';
+        // レイアウトの行列番号順に文字列生成
+        layout.forEach(function(row, rowIdx) {
+          row.fields.forEach(function(field, colIdx) {
+            var code = field.code;
+            str += rowIdx + ',' + colIdx + ',' + code + ',';
+
+            // レイアウトの順に合わせて
+            // フィールド一覧のプロパティを追加
+            str += properties[code].label + ',' + properties[code].type;
+            str += '\n';
+          });
+        });
+        console.log(str);
       });
     }); // click();
 
