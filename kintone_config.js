@@ -9,9 +9,9 @@ jQuery(function($) {
         var prop = properties[key];
         str += key + ',' + prop.label + ',' + prop.type + '\n';
       }
-      console.log(str);
+      return str;
     }, function(error) {
-      console.log(error);
+      return error;
     });
   }
 
@@ -32,7 +32,8 @@ jQuery(function($) {
         app: appId,
         lang: 'ja',
       }
-      getFieldProps(body);
+      var str = getFieldProps(body);
+      console.log(str);
     }); // click();
 
     // メニューの空白部分にボタンを設定
