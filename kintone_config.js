@@ -17,20 +17,20 @@ jQuery(function($) {
     });
   }
 
+  function createSjisBlob(str) {
+    // 文字列を配列に
+    var array = [];
+    for (var i = 0, il = str.length; i < il; i++) array.push(str.charCodeAt(i));
+
+    // encoding.jsで文字コードをSJISに変換
+    var sjisArray = Encoding.convert(array, 'SJIS', 'UNICODE');
+
+    // バイナリとしてBlobオブジェクト作成
+    var uint8Array = new Uint8Array(sjisArray);
+    return new Blob([uint8Array], { type: 'text/csv' });
+  }
+
   function downloadCsv(csvbuf) {
-    function createSjisBlob(str) {
-      // 文字列を配列に
-      var array = [];
-      for (var i = 0, il = str.length; i < il; i++) array.push(str.charCodeAt(i));
-
-      // encoding.jsで文字コードをSJISに変換
-      var sjisArray = Encoding.convert(array, 'SJIS', 'UNICODE');
-
-      // バイナリとしてBlobオブジェクト作成
-      var uint8Array = new Uint8Array(sjisArray);
-      return new Blob([uint8Array], { type: 'text/csv' });
-    }
-
     // var blob = new Blob([csvbuf], { type: 'text/csv' }); // createUtf8Blob
     var blob = createSjisBlob(csvbuf);
     var url = (window.URL || window.webkitURL).createObjectURL(blob);
